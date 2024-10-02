@@ -35,4 +35,5 @@ public class AccountController {
         AccountDto accountDto = accountService.getAccountDetailsByPhoneNumber(phoneNumber);
         return new ResponseEntity<>(accountDto,HttpStatus.OK);
     }
+
 }
