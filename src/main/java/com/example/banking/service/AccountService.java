@@ -7,4 +7,6 @@ public interface AccountService {
     AccountDto createAccount(AccountDto accountDto);
 
     AccountDto getAccountDetailsByPhoneNumber(String phoneNumber);
+
+    AccountDto deposit(String phoneNumber, double amount);
 }

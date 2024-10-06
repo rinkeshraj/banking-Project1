@@ -1,5 +1,7 @@
 server:
   port: 12345
+  error:
+    include-message: always
 
 spring:
   application:
@@ -14,3 +16,5 @@ spring:
     show-sql: true
     generate-ddl: true
 
+response:
+  include-error-details: true
