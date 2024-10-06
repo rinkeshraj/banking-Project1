@@ -1,11 +1,13 @@
 package com.example.banking.controller;
 
 import com.example.banking.dto.AccountDto;
+import com.example.banking.exception.CustomException;
 import com.example.banking.service.AccountService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 
 import static com.example.banking.constant.AccountConstant.*;
 
@@ -36,4 +38,15 @@ public class AccountController {
         return new ResponseEntity<>(accountDto,HttpStatus.OK);
     }
 
+    //Get the Account Details
+    @PostMapping(value = DEPOSIT_AMOUNT)
+    public ResponseEntity<String> getAccountDetails(@RequestBody AccountDto request){
+        log.info("Post Request received");
+        double amount = request.getBalance();
+        log.info("Amount: {}", amount);
+        String phoneNumber = request.getPhoneNumber();
+        log.info("PhoneNumber: {}", phoneNumber);
+        AccountDto accountDto = accountService.deposit(phoneNumber, amount);
+        return new ResponseEntity<>("Successfully Updated",HttpStatus.OK);
+    }
 }

@@ -53,4 +53,24 @@ public class AccountServiceImpl implements AccountService  {
             return AccountMapper.mapToAccountDto(existRecord);
         }
     }
+
+    @Override
+    public AccountDto deposit(String phoneNumber, double amount){
+        if (phoneNumber == null || phoneNumber.isEmpty()) {
+            log.warn("PhoneNumber is Blank or Empty....");
+            throw new CustomException(HttpStatus.BAD_REQUEST, String.valueOf(HttpStatus.BAD_REQUEST.value()), HttpStatus.BAD_REQUEST.getReasonPhrase(), ERROR_MSG_1);
+        }
+        AccountEntity existRecord = accountRepository.findByPhoneNumber(phoneNumber);
+        if(existRecord == null ){
+            log.warn("Record Not found in DB with phoneNumber: {}", phoneNumber);
+            throw new CustomException(HttpStatus.NOT_FOUND, "NOT FOUND", HttpStatus.NOT_FOUND.getReasonPhrase(), ERROR_MSG_1);
+        }else{
+            log.info("Record Found...");
+            double totalBalance = existRecord.getBalance() + amount;
+            existRecord.setBalance(totalBalance);
+            AccountEntity saveAccount = accountRepository.save(existRecord);
+            log.info("Updating the Record for phoneNumber: {}",existRecord.getPhoneNumber());
+            return AccountMapper.mapToAccountDto(saveAccount);
+        }
+    }
 }
