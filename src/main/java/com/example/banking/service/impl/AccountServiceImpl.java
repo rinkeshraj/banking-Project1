@@ -6,6 +6,7 @@ import com.example.banking.exception.CustomException;
 import com.example.banking.mapper.AccountMapper;
 import com.example.banking.repository.AccountRepository;
 import com.example.banking.service.AccountService;
+import com.example.banking.validator.AccountValidator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,10 +20,12 @@ import static com.example.banking.constant.AccountConstant.NOT_EXISTS;
 public class AccountServiceImpl implements AccountService  {
 
     private AccountRepository accountRepository;
+    private AccountValidator accountValidator;
 
     @Autowired
-    public AccountServiceImpl(AccountRepository accountRepository) {
+    public AccountServiceImpl(AccountRepository accountRepository, AccountValidator accountValidator) {
         this.accountRepository = accountRepository;
+        this.accountValidator = accountValidator;
     }
 
     @Override
@@ -55,15 +58,36 @@ public class AccountServiceImpl implements AccountService  {
     }
 
     @Override
-    public AccountDto deposit(String phoneNumber, String amount){
+    public AccountDto deposit(String phoneNumber, double amount){
         AccountEntity existRecord = accountRepository.findByPhoneNumber(phoneNumber);
         if(existRecord == null ){
             log.warn("Record Not found in DB with phoneNumber: {}", phoneNumber);
             throw new CustomException(HttpStatus.NOT_FOUND, "NOT FOUND", HttpStatus.NOT_FOUND.getReasonPhrase(), ERROR_MSG_1);
         }else{
             log.info("Record Found...");
-            String totalBalance = existRecord.getBalance() + amount;
+            double totalBalance = existRecord.getBalance() + amount;
+            log.info("Total Balance present in DB: {}",totalBalance);
             existRecord.setBalance(totalBalance);
+            AccountEntity saveAccount = accountRepository.save(existRecord);
+            log.info("Updating the Record for phoneNumber: {}",existRecord.getPhoneNumber());
+            return AccountMapper.mapToAccountDto(saveAccount);
+        }
+    }
+
+    @Override
+    public AccountDto withDraw(String phoneNumber, double withdrawAmount){
+        AccountEntity existRecord = accountRepository.findByPhoneNumber(phoneNumber);
+        if(existRecord == null ){
+            log.warn("Record Not found in DB with phoneNumber: {}", phoneNumber);
+            throw new CustomException(HttpStatus.NOT_FOUND, "NOT FOUND", HttpStatus.NOT_FOUND.getReasonPhrase(), ERROR_MSG_1);
+        }else{
+            log.info("Record Found...");
+            double DbBalance = existRecord.getBalance();
+            accountValidator.verifyBalanceInDB(DbBalance,withdrawAmount);
+            log.info("Balance present: {} and Withdraw balance: {}",DbBalance,withdrawAmount);
+            double remainingBalance = DbBalance - withdrawAmount;
+            log.info("Remaining Balance present in DB: {}",remainingBalance);
+            existRecord.setBalance(remainingBalance);
             AccountEntity saveAccount = accountRepository.save(existRecord);
             log.info("Updating the Record for phoneNumber: {}",existRecord.getPhoneNumber());
             return AccountMapper.mapToAccountDto(saveAccount);

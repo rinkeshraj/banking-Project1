@@ -12,6 +12,6 @@ public class AccountDto {
     private String holderLastName;
     private String email;
     private String phoneNumber;
-    private String balance;
+    private Double balance;
 
 }
