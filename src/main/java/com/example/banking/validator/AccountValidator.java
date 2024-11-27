@@ -3,13 +3,14 @@ package com.example.banking.validator;
 import com.example.banking.exception.CustomException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import static com.example.banking.constant.AccountConstant.AMOUNT_NOT_PRESENT;
 import static com.example.banking.constant.AccountConstant.PHONE_NUMBER_NOT_PRESENT;
 
 @Slf4j
-@Service
+@Component
 public class AccountValidator {
 
     public void verifyRequestData(String phoneNumber,String amount){
