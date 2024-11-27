@@ -43,14 +43,27 @@ public class AccountController {
         return new ResponseEntity<>(accountDto,HttpStatus.OK);
     }
 
-    //Get the Account Details
+    //Get the Account Deposit
     @PostMapping(value = DEPOSIT_AMOUNT)
     public ResponseEntity<String> getAccountDetails(@RequestBody AccountDto request){
         log.info("Post Request received to Deposit the Balance");
-        String balance = request.getBalance();
+        double balance = request.getBalance();
         String phoneNumber = request.getPhoneNumber();
         accountValidator.verifyRequestData(phoneNumber, balance);
+        log.info("Amount to Deposit: {}", balance);
         AccountDto accountDto = accountService.deposit(phoneNumber, balance);
-        return new ResponseEntity<>("Successfully Updated",HttpStatus.OK);
+        return new ResponseEntity<>("Successfully Deposit",HttpStatus.OK);
+    }
+
+    //Get the Account Withdraw
+    @PostMapping(value = WITH_DRAW_AMOUNT)
+    public ResponseEntity<String> amountWithdraw(@RequestBody AccountDto request){
+        log.info("Post Request received to WithDraw the Balance");
+        double balance = request.getBalance();
+        String phoneNumber = request.getPhoneNumber();
+        accountValidator.verifyRequestData(phoneNumber, balance);
+        log.info("Amount to WithDraw: {}", balance);
+        AccountDto accountDto = accountService.withDraw(phoneNumber, balance);
+        return new ResponseEntity<>("Successfully withDraw",HttpStatus.OK);
     }
 }
