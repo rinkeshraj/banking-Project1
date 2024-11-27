@@ -1,9 +1,10 @@
 package com.example.banking.controller;
 
 import com.example.banking.dto.AccountDto;
-import com.example.banking.exception.CustomException;
 import com.example.banking.service.AccountService;
+import com.example.banking.validator.AccountValidator;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,10 +18,14 @@ import static com.example.banking.constant.AccountConstant.*;
 public class AccountController {
 
     private AccountService accountService;
+    private AccountValidator accountValidator;
 
-    public AccountController(AccountService accountService) {
+    @Autowired
+    public AccountController(AccountService accountService, AccountValidator accountValidator) {
         this.accountService = accountService;
+        this.accountValidator = accountValidator;
     }
+
 
     //For creating record in DB
     @PostMapping(value = CREATE)
@@ -41,12 +46,11 @@ public class AccountController {
     //Get the Account Details
     @PostMapping(value = DEPOSIT_AMOUNT)
     public ResponseEntity<String> getAccountDetails(@RequestBody AccountDto request){
-        log.info("Post Request received");
-        double amount = request.getBalance();
-        log.info("Amount: {}", amount);
+        log.info("Post Request received to Deposit the Balance");
+        String balance = request.getBalance();
         String phoneNumber = request.getPhoneNumber();
-        log.info("PhoneNumber: {}", phoneNumber);
-        AccountDto accountDto = accountService.deposit(phoneNumber, amount);
+        accountValidator.verifyRequestData(phoneNumber, balance);
+        AccountDto accountDto = accountService.deposit(phoneNumber, balance);
         return new ResponseEntity<>("Successfully Updated",HttpStatus.OK);
     }
 }
