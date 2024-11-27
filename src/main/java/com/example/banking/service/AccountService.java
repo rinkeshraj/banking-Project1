@@ -8,5 +8,5 @@ public interface AccountService {
 
     AccountDto getAccountDetailsByPhoneNumber(String phoneNumber);
 
-    AccountDto deposit(String phoneNumber, double amount);
+    AccountDto deposit(String phoneNumber, String amount);
 }

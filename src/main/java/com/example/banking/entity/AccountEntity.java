@@ -36,6 +36,6 @@ public class AccountEntity {
 
     @Column(name = "BALANCE")
     @NonNull
-    private double balance;
+    private String balance;
 
 }
