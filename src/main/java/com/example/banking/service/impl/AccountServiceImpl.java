@@ -61,7 +61,7 @@ public class AccountServiceImpl implements AccountService  {
     public AccountDto deposit(String phoneNumber, double amount){
         AccountEntity existRecord = accountRepository.findByPhoneNumber(phoneNumber);
         if(existRecord == null ){
-            log.warn("Record Not found in DB with phoneNumber: {}", phoneNumber);
+            log.warn("Record Not found in DB with phoneNumber: {} to deposit", phoneNumber);
             throw new CustomException(HttpStatus.NOT_FOUND, "NOT FOUND", HttpStatus.NOT_FOUND.getReasonPhrase(), ERROR_MSG_1);
         }else{
             log.info("Record Found...");
@@ -69,7 +69,7 @@ public class AccountServiceImpl implements AccountService  {
             log.info("Total Balance present in DB: {}",totalBalance);
             existRecord.setBalance(totalBalance);
             AccountEntity saveAccount = accountRepository.save(existRecord);
-            log.info("Updating the Record for phoneNumber: {}",existRecord.getPhoneNumber());
+            log.info("Updating the Record for phoneNumber after deposit: {}",existRecord.getPhoneNumber());
             return AccountMapper.mapToAccountDto(saveAccount);
         }
     }
@@ -78,10 +78,10 @@ public class AccountServiceImpl implements AccountService  {
     public AccountDto withDraw(String phoneNumber, double withdrawAmount){
         AccountEntity existRecord = accountRepository.findByPhoneNumber(phoneNumber);
         if(existRecord == null ){
-            log.warn("Record Not found in DB with phoneNumber: {}", phoneNumber);
+            log.warn("Record Not found in DB with phoneNumber: {} to withdraw", phoneNumber);
             throw new CustomException(HttpStatus.NOT_FOUND, "NOT FOUND", HttpStatus.NOT_FOUND.getReasonPhrase(), ERROR_MSG_1);
         }else{
-            log.info("Record Found...");
+            log.info("Record Found....");
             double DbBalance = existRecord.getBalance();
             accountValidator.verifyBalanceInDB(DbBalance,withdrawAmount);
             log.info("Balance present: {} and Withdraw balance: {}",DbBalance,withdrawAmount);
@@ -89,7 +89,7 @@ public class AccountServiceImpl implements AccountService  {
             log.info("Remaining Balance present in DB: {}",remainingBalance);
             existRecord.setBalance(remainingBalance);
             AccountEntity saveAccount = accountRepository.save(existRecord);
-            log.info("Updating the Record for phoneNumber: {}",existRecord.getPhoneNumber());
+            log.info("Updating the Record for phoneNumber after withdrawal: {}",existRecord.getPhoneNumber());
             return AccountMapper.mapToAccountDto(saveAccount);
         }
     }
