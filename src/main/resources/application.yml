@@ -18,3 +18,4 @@ spring:
 
 response:
   include-error-details: true
+
